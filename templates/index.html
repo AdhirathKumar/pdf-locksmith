@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDFLocksmith</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='style.css') }}"
+    />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <header class="card-header">
+          <h1 class="title">PDFLocksmith</h1>
+          <p class="subtitle">Lock or unlock your PDF with one click.</p>
+        </header>
+
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %} {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+        {% endif %}
+
+        <form
+          class="form"
+          method="post"
+          action="{{ url_for('process_pdf') }}"
+          enctype="multipart/form-data"
+        >
+          <div class="field">
+            <label for="file">PDF file</label>
+            <input
+              id="file"
+              name="file"
+              type="file"
+              accept="application/pdf"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <span class="label">Mode</span>
+            <div class="mode-toggle">
+              <label class="mode-option">
+                <input
+                  type="radio"
+                  name="mode"
+                  value="lock"
+                  {% if mode != 'unlock' %}checked{% endif %}
+                />
+                <span>Lock</span>
+              </label>
+              <label class="mode-option">
+                <input
+                  type="radio"
+                  name="mode"
+                  value="unlock"
+                  {% if mode == 'unlock' %}checked{% endif %}
+                />
+                <span>Unlock</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password"
+              >{% if mode == 'unlock' %}Existing password{% else %}New
+              password{% endif %}</label
+            >
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Type password here"
+              required
+            />
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Process PDF</button>
+          </div>
+        </form>
+
+        {% if result_id %}
+        <section class="result">
+          <h2>Result ready</h2>
+          <p>Your processed file is ready to download.</p>
+          <a
+            class="btn btn-secondary"
+            href="{{ url_for('download_file', file_id=result_id) }}"
+            >Download result</a
+          >
+        </section>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>
